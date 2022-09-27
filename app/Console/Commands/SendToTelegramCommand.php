@@ -3,9 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Flat;
-use DefStudio\Telegraph\Models\TelegraphChat;
+use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -14,6 +13,9 @@ class SendToTelegramCommand extends Command
     protected $signature = 'send:telegram';
     protected $description = 'Send new flats to telegram channel';
 
+    /**
+     * @throws Exception
+     */
     public function handle()
     {
         $flat = Flat::whereNull('published_at')->first();
@@ -51,11 +53,22 @@ class SendToTelegramCommand extends Command
             $flat->published_at = now();
             $flat->save();
             $this->info('Квартира: ' . $flat->title . ' – успешно опубликована');
+        } else {
+            throw new Exception($result['description']);
         }
     }
 
     private function escapeChars($text): string
     {
-        return Str::replace(['-', '.'], ['\-', '\.'], $text);
+        $chars = [
+            '-', '.', '!', '(', ')',
+        ];
+
+        $replace = [];
+        foreach($chars as $char) {
+            $replace[] = '\\'.$char;
+        }
+
+        return Str::replace($chars, $replace, $text);
     }
 }

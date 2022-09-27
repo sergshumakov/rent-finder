@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -20,11 +19,6 @@ class ParseSSCommand extends Command
             $this->info('Загружаем страницу: ' . $pageNum);
             $this->getPage($pageNum);
         }
-    }
-
-    public function schedule(Schedule $schedule): void
-    {
-        // $schedule->command(static::class)->everyMinute();
     }
 
     private function getPage(int $page) {
