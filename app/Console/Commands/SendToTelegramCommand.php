@@ -80,7 +80,7 @@ class SendToTelegramCommand extends Command
     private function escapeChars($text): string
     {
         $chars = [
-            '-', '.', '!', '(', ')',
+            '-', '.', '!', '(', ')', '{', '}',
         ];
 
         $replace = [];
