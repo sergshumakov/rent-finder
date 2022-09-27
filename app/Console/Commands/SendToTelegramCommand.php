@@ -33,22 +33,35 @@ class SendToTelegramCommand extends Command
         $text .= 'Цена: ' . $flat->price . "\n\n";
         $text .= "[Подробности и контакты](https://ss.ge$flat->link)";
 
-        $photos = [];
-        foreach (json_decode($flat->photos) as $photo) {
-            $photos[] = [
-                'type' => 'photo',
-                'media' => $photo,
-            ];
-        }
-        $photos[0]['parse_mode'] = 'MarkdownV2';
-        $photos[0]['caption'] = $text;
+        $rawPhotos = json_decode($flat->photos);
+        if(count($rawPhotos)) {
+            // album with photos
+            $photos = [];
+            foreach ($rawPhotos as $photo) {
+                $photos[] = [
+                    'type' => 'photo',
+                    'media' => $photo,
+                ];
+            }
+            $photos[0]['parse_mode'] = 'MarkdownV2';
+            $photos[0]['caption'] = $text;
 
-        $result = Http::asJson()
-            ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMediaGroup', [
-                'chat_id' => -1001800255662,
-                'media' => $photos,
-            ])
-            ->json();
+            $result = Http::asJson()
+                ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMediaGroup', [
+                    'chat_id' => -1001800255662,
+                    'media' => $photos,
+                ])
+                ->json();
+        } else {
+            // text
+            $result = Http::asJson()
+                ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMessage', [
+                    'chat_id' => -1001800255662,
+                    'text' => $text,
+                    'parse_mode' => 'MarkdownV2'
+                ])
+                ->json();
+        }
 
         if (
             array_key_exists('ok', $result) &&
