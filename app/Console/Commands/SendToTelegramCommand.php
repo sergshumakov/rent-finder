@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use LanguageDetection\Language;
 
 class SendToTelegramCommand extends Command
 {
@@ -18,7 +19,10 @@ class SendToTelegramCommand extends Command
      */
     public function handle()
     {
-        $flat = Flat::whereNull('published_at')->first();
+        $flat = Flat::whereNull('published_at')
+            ->whereNull('error_at')
+            ->first();
+
         if(!$flat) {
             $this->info('Квартир для публикации не найдено');
             return;
@@ -26,7 +30,8 @@ class SendToTelegramCommand extends Command
 
         $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link)*\n\n";
         if ($flat->description) {
-            $text .= $this->escapeChars($flat->description) . "\n\n";
+            $description = $this->getTranslateDescription($flat->description);
+            $text .= $this->escapeChars($description) . "\n\n";
         }
         $text .= 'Адрес: ' . $this->escapeChars($flat->address) . "\n";
         $text .= 'Площадь: ' . $flat->flat_area . "\n";
@@ -73,8 +78,34 @@ class SendToTelegramCommand extends Command
             $flat->save();
             $this->info('Квартира: ' . $flat->title . ' – успешно опубликована');
         } else {
+            if ($result['error_code'] == 400) {
+                $flat->error_at = now();
+                $flat->save();
+            }
             throw new Exception($result['description']);
         }
+    }
+
+    private function getTranslateDescription(string $text): string
+    {
+        $ld = new Language();
+        $languages = $ld->detect($text)->close();
+
+        if ($languages['ka'] < 0.1) {
+            return $text;
+        }
+
+        // translate
+        $translate = Http::asJson()
+            ->withToken('t1.9euelZqMiZKUxpqTlImemZCYz4uSyu3rnpWayZiVjsabzJmeysuZmY-Sjc7l8_ctQTVm-e8JQAh1_t3z921vMmb57wlACHX-.d73ViEMkqp3XUsLc48SD4nf72RaPSNdLEJR03HgAKxgrbLK2pxr9Eu27Larsa4pcgCIA0uAqnlKAWQK-kvh8Ag')
+            ->post('https://translate.api.cloud.yandex.net/translate/v2/translate', [
+                'targetLanguageCode' => 'ru',
+                'texts' => [$text],
+                'folderId' => 'b1gk5psvihgupg93uirb',
+            ])
+            ->json('translations');
+
+        return $translate[0]['text'];
     }
 
     private function escapeChars($text): string

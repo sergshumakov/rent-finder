@@ -10,6 +10,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "patrickschur/language-detection": "^5.2",
         "symfony/dom-crawler": "^6.1"
     },
     "require-dev": {
