@@ -19,6 +19,10 @@ class SendToTelegramCommand extends Command
     public function handle()
     {
         $flat = Flat::whereNull('published_at')->first();
+        if(!$flat) {
+            $this->info('Квартир для публикации не найдено');
+            return;
+        }
 
         $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link)*\n\n";
         $text .= $this->escapeChars($flat->description) . "\n\n";
