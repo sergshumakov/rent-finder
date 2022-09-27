@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Flat;
+use DefStudio\Telegraph\Models\TelegraphChat;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+
+class SendToTelegramCommand extends Command
+{
+    protected $signature = 'send:telegram';
+    protected $description = 'Send new flats to telegram channel';
+
+    public function handle()
+    {
+        $flat = Flat::whereNull('published_at')->first();
+
+        $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link)*\n\n";
+        $text .= $this->escapeChars($flat->description) . "\n\n";
+        $text .= 'Адрес: ' . $this->escapeChars($flat->address) . "\n";
+        $text .= 'Площадь: ' . $flat->flat_area . "\n";
+        $text .= 'Дом: ' . $flat->flat_type . "\n";
+        $text .= 'Этаж: ' . $flat->flat_floor . "\n\n";
+        $text .= 'Цена: ' . $flat->price . "\n\n";
+        $text .= "[Подробности и контакты](https://ss.ge$flat->link)";
+
+        $photos = [];
+        foreach (json_decode($flat->photos) as $photo) {
+            $photos[] = [
+                'type' => 'photo',
+                'media' => $photo,
+            ];
+        }
+        $photos[0]['parse_mode'] = 'MarkdownV2';
+        $photos[0]['caption'] = $text;
+
+        $result = Http::asJson()
+            ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMediaGroup', [
+                'chat_id' => -1001800255662,
+                'media' => $photos,
+            ])
+            ->json();
+
+        if (
+            array_key_exists('ok', $result) &&
+            $result['ok'] === true
+        ) {
+            $flat->published_at = now();
+            $flat->save();
+            $this->info('Квартира: ' . $flat->title . ' – успешно опубликована');
+        }
+    }
+
+    private function escapeChars($text): string
+    {
+        return Str::replace(['-', '.'], ['\-', '\.'], $text);
+    }
+}
