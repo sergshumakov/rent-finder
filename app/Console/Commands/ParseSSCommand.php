@@ -33,7 +33,7 @@ class ParseSSCommand extends Command
                 ->exists();
             if($existFlat) return;
 
-            $photos = $item->filter('.owl-lazy')->each(function (Crawler $pic) use (&$data) {
+            $photos = $item->filter('.DesktopArticleLayout .owl-lazy')->each(function (Crawler $pic) use (&$data) {
                 return Str::remove(
                     '_Thumb',
                     $pic->attr('data-src')
@@ -49,7 +49,7 @@ class ParseSSCommand extends Command
                 'price' => $item->filter('.latest_price')->last()->text(),
                 'address' => $item->filter('.StreeTaddressList')->text(),
                 'flat_area' => $item->filter('.latest_flat_km')->text(),
-                'flat_type' => $item->filter('.latest_flat_type')->text(),
+                'flat_type' => $item->filter('.latest_flat_type')->count() ? $item->filter('.latest_flat_type')->text() : null,
                 'flat_floor' => $item->filter('.latest_stair_count')->text(),
                 'photos' => json_encode($photos),
                 'time' => $item->filter('.add_time')->text(),
