@@ -86,6 +86,9 @@ class SendToTelegramCommand extends Command
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function getTranslateDescription(string $text): string
     {
         $ld = new Language();
@@ -97,15 +100,19 @@ class SendToTelegramCommand extends Command
 
         // translate
         $translate = Http::asJson()
-            ->withToken('t1.9euelZqMiZKUxpqTlImemZCYz4uSyu3rnpWayZiVjsabzJmeysuZmY-Sjc7l8_ctQTVm-e8JQAh1_t3z921vMmb57wlACHX-.d73ViEMkqp3XUsLc48SD4nf72RaPSNdLEJR03HgAKxgrbLK2pxr9Eu27Larsa4pcgCIA0uAqnlKAWQK-kvh8Ag')
+            ->withToken('AQVNxo6Z3rcWLYNxHYfm23wmcwqYpEPbOm-QIEzq', 'Api-Key')
             ->post('https://translate.api.cloud.yandex.net/translate/v2/translate', [
                 'targetLanguageCode' => 'ru',
                 'texts' => [$text],
                 'folderId' => 'b1gk5psvihgupg93uirb',
             ])
-            ->json('translations');
+            ->json();
 
-        return $translate[0]['text'];
+        if (array_key_exists('translations', $translate)) {
+            return $translate[0]['text'];
+        }
+
+        throw new Exception($translate['message']);
     }
 
     private function escapeChars($text): string

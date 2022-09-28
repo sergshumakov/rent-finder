@@ -15,14 +15,7 @@ class ParseSSCommand extends Command
 
     public function handle()
     {
-        for ($pageNum = 1; $pageNum <= 5; $pageNum++) {
-            $this->info('Загружаем страницу: ' . $pageNum);
-            $this->getPage($pageNum);
-        }
-    }
-
-    private function getPage(int $page) {
-        $raw = Http::get('https://ss.ge/ru/%D0%BD%D0%B5%D0%B4%D0%B2%D0%B8%D0%B6%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C/l/%D0%9A%D0%B2%D0%B0%D1%80%D1%82%D0%B8%D1%80%D0%B0/%D0%90%D1%80%D0%B5%D0%BD%D0%B4%D0%B0?MunicipalityId=95&CityIdList=95&subdistr=47&PriceType=false&CurrencyId=1&Page=' . $page)
+        $raw = Http::get('https://ss.ge/ru/недвижимость/l/Квартира/Аренда?RealEstateTypeId=5&RealEstateDealTypeId=1&BaseUrl=/ru/недвижимость/l&CurrentUserId=&Query=&MunicipalityId=95&CityIdList=95&IsMap=false&subdistr=44,45,46,47,48,49,50,27,26,2,3,4,5&stId=&PrcSource=1&CurrencyId=&PageSize=100&Sort.SortExpression=%22OrderDate%22%20DESC')
             ->body();
 
         $html = new Crawler($raw);
