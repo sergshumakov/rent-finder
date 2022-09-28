@@ -95,7 +95,7 @@ class SendToTelegramCommand extends Command
         $ld = new Language();
         $languages = $ld->detect($text)->close();
 
-        if ($languages['ka'] < 0.1) {
+        if ($languages['ru'] > 0.1) {
             return $text;
         }
 
