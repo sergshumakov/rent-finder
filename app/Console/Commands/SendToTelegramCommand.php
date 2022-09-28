@@ -109,7 +109,7 @@ class SendToTelegramCommand extends Command
             ->json();
 
         if (array_key_exists('translations', $translate)) {
-            return $translate[0]['text'];
+            return $translate['translations'][0]['text'];
         }
 
         throw new Exception($translate['message']);
