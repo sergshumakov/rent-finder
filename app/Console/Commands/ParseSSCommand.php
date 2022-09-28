@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\District;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -15,11 +16,19 @@ class ParseSSCommand extends Command
 
     public function handle()
     {
-        $raw = Http::get('https://ss.ge/ru/недвижимость/l/Квартира/Аренда?RealEstateTypeId=5&RealEstateDealTypeId=1&BaseUrl=/ru/недвижимость/l&CurrentUserId=&Query=&MunicipalityId=95&CityIdList=95&IsMap=false&subdistr=44,45,46,47,48,49,50,27,26,2,3,4,5&stId=&PrcSource=1&CurrencyId=&PageSize=100&Sort.SortExpression=%22OrderDate%22%20DESC')
+        foreach(District::all() as $district) {
+            $this->parseDistrict($district);
+            sleep(1);
+        }
+    }
+
+    private function parseDistrict(District $district)
+    {
+        $raw = Http::get($district->source_url)
             ->body();
 
         $html = new Crawler($raw);
-        $html->filter('.latest_article_each')->each(function (Crawler $item) use (&$flats) {
+        $html->filter('.latest_article_each')->each(function (Crawler $item) use ($district) {
             $id = 'ss-' . $item->attr('data-id');
 
             $existFlat = DB::table('flats')->where('uuid', $id)
@@ -34,6 +43,7 @@ class ParseSSCommand extends Command
             });
 
             $data = [
+                'district_id' => $district->id,
                 'source' => 'ss.ge',
                 'uuid' => 'ss-' . $item->attr('data-id'),
                 'link' => $item->filter('.latest_desc a')->attr('href'),

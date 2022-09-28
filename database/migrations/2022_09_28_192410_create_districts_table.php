@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up()
+    {
+        Schema::create('districts', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('source_url', 1024);
+            $table->bigInteger('channel_id');
+            $table->timestamps();
+        });
+
+        Schema::table('flats', function (Blueprint $table) {
+            $table->foreignIdFor(App\Models\District::class, 'district_id')
+                ->nullable()
+                ->after('id');
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropColumns('flats', ['district_id']);
+        Schema::dropIfExists('districts');
+    }
+};
