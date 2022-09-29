@@ -16,9 +16,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('parse:ss')->everyFiveMinutes();
-        $schedule->command('send:telegram 1')->everyMinute();
-        $schedule->command('send:telegram 2')->everyMinute();
-        $schedule->command('send:telegram 3')->everyMinute();
+        $schedule->command('send:telegram')->everyMinute();
     }
 
     /**

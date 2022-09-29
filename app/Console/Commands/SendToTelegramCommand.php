@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\District;
 use App\Models\Flat;
 use Exception;
 use Illuminate\Console\Command;
@@ -11,7 +12,7 @@ use LanguageDetection\Language;
 
 class SendToTelegramCommand extends Command
 {
-    protected $signature = 'send:telegram {districtId}';
+    protected $signature = 'send:telegram';
     protected $description = 'Send new flats to telegram channel';
 
     /**
@@ -19,7 +20,17 @@ class SendToTelegramCommand extends Command
      */
     public function handle()
     {
-        $flat = Flat::whereDistrictId($this->argument('districtId'))
+        foreach (District::all() as $district) {
+            $this->sendFlatFromDistrict($district);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function sendFlatFromDistrict(District $district)
+    {
+        $flat = Flat::whereDistrictId($district->id)
             ->whereNull('published_at')
             ->whereNull('error_at')
             ->first();
@@ -56,7 +67,7 @@ class SendToTelegramCommand extends Command
 
             $result = Http::asJson()
                 ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMediaGroup', [
-                    'chat_id' => $flat->district->channel_id,
+                    'chat_id' => $district->channel_id,
                     'media' => $photos,
                 ])
                 ->json();
@@ -64,7 +75,7 @@ class SendToTelegramCommand extends Command
             // text
             $result = Http::asJson()
                 ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMessage', [
-                    'chat_id' => $flat->district->channel_id,
+                    'chat_id' => $district->channel_id,
                     'text' => $text,
                     'parse_mode' => 'MarkdownV2'
                 ])
