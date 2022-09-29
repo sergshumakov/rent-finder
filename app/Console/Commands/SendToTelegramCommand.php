@@ -42,7 +42,8 @@ class SendToTelegramCommand extends Command
 
         $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link)*\n\n";
         if ($flat->description) {
-            $description = $this->getTranslateDescription($flat->description);
+            $descriptionWithLimit = Str::limit($flat->description, 512);
+            $description = $this->getTranslateDescription($descriptionWithLimit);
             $text .= $this->escapeChars($description) . "\n\n";
         }
         $text .= 'Адрес: ' . $this->escapeChars($flat->address) . "\n";
