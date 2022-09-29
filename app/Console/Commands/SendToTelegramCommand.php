@@ -40,12 +40,15 @@ class SendToTelegramCommand extends Command
             return;
         }
 
-        $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link)*\n\n";
+        $id = explode('-', $flat->uuid)[1];
+        $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link) \(ID: $id\)*\n\n";
+
         if ($flat->description) {
             $descriptionWithLimit = Str::limit($flat->description, 512);
             $description = $this->getTranslateDescription($descriptionWithLimit);
             $text .= $this->escapeChars($description) . "\n\n";
         }
+
         $text .= 'Адрес: ' . $this->escapeChars($flat->address) . "\n";
         $text .= 'Площадь: ' . $flat->flat_area . "\n";
         $text .= 'Дом: ' . $flat->flat_type . "\n";
