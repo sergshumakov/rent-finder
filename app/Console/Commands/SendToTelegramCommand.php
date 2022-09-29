@@ -41,7 +41,7 @@ class SendToTelegramCommand extends Command
         }
 
         $id = explode('-', $flat->uuid)[1];
-        $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link) \(ID: $id\)*\n\n";
+        $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link) \| ID: $id*\n\n";
 
         if ($flat->description) {
             $descriptionWithLimit = Str::limit($flat->description, 512);
