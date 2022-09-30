@@ -49,8 +49,10 @@ class ParseMyHomeCommand extends Command
 
                 $cadNumberRaw = $flatPage->filter('.cadastral');
                 $cadNumber = $cadNumberRaw->count() ? Str::replace('Кадастровый код: ', '', $cadNumberRaw->text()) : null;
-                $existFlatByCad = DB::table('flats')->where('cad_number', $cadNumber)->exists();
-                if($existFlatByCad) return;
+                if ($cadNumber) {
+                    $existFlatByCad = DB::table('flats')->where('cad_number', $cadNumber)->exists();
+                    if($existFlatByCad) return;
+                }
 
                 $photos = [];
                 $photoContainer = $item->filter('img.swiper-lazy');
