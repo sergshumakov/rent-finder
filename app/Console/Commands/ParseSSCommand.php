@@ -24,7 +24,7 @@ class ParseSSCommand extends Command
 
     private function parseDistrict(District $district)
     {
-        $raw = Http::get($district->source_url)
+        $raw = Http::get($district->ss_url)
             ->body();
 
         $html = new Crawler($raw);
@@ -46,7 +46,7 @@ class ParseSSCommand extends Command
                 'district_id' => $district->id,
                 'source' => 'ss.ge',
                 'uuid' => 'ss-' . $item->attr('data-id'),
-                'link' => $item->filter('.latest_desc a')->attr('href'),
+                'link' => 'https://ss.ge' . $item->filter('.latest_desc a')->attr('href'),
                 'title' => $item->filter('.TiTleSpanList')->text(),
                 'description' => $item->filter('.DescripTionListB')->text(),
                 'price' => $item->filter('.latest_price')->last()->text(),

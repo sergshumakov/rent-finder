@@ -41,7 +41,7 @@ class SendToTelegramCommand extends Command
         }
 
         $id = explode('-', $flat->uuid)[1];
-        $text = "*[{$this->escapeChars($flat->title)}](https://ss.ge$flat->link) \| ID: $id*\n\n";
+        $text = "*[{$this->escapeChars($flat->title)}]($flat->link) \| ID: $id*\n\n";
 
         if ($flat->description) {
             $descriptionWithLimit = Str::limit($flat->description, 512);
@@ -49,12 +49,22 @@ class SendToTelegramCommand extends Command
             $text .= $this->escapeChars($description) . "\n\n";
         }
 
-        $text .= 'Адрес: ' . $this->escapeChars($flat->address) . "\n";
-        $text .= 'Площадь: ' . $flat->flat_area . "\n";
-        $text .= 'Дом: ' . $flat->flat_type . "\n";
+        if ($flat->lat && $flat->lng) {
+            $address = "[{$this->escapeChars($flat->address)}](https://yandex.com.ge/maps/10277/tbilisi/?ll=$flat->lng%2C$flat->lat&mode=whatshere&whatshere%5Bpoint%5D=$flat->lng%2C$flat->lat&whatshere%5Bzoom%5D=15&z=15)";
+        } else {
+            $address = $this->escapeChars($flat->address);
+        }
+
+        $text .= 'Адрес: ' . $address . "\n";
+        $text .= 'Площадь: ' . $this->escapeChars($flat->flat_area) . "\n";
+
+        if ($flat->flat_type) {
+            $text .= 'Дом: ' . $flat->flat_type . "\n";
+        }
+
         $text .= 'Этаж: ' . $flat->flat_floor . "\n\n";
-        $text .= 'Цена: ' . $flat->price . "\n\n";
-        $text .= "[Подробности и контакты](https://ss.ge$flat->link)";
+        $text .= 'Цена: ' . $this->escapeChars($flat->price) . "\n\n";
+        $text .= "[Подробности и контакты]($flat->link)";
 
         $rawPhotos = json_decode($flat->photos);
         if(count($rawPhotos)) {
