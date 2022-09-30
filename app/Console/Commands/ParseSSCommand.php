@@ -24,7 +24,8 @@ class ParseSSCommand extends Command
 
     private function parseDistrict(District $district)
     {
-        $raw = Http::get($district->ss_url)
+        $raw = Http::retry(3, 3000)
+            ->get($district->ss_url)
             ->body();
 
         $html = new Crawler($raw);
