@@ -30,7 +30,7 @@ cp .env.example .env
 В корне лежит [.env](./.env.example) в самом конце есть 2 важных ключа
 
 - TELEGRAM_BOT_TOKEN – получаете в https://t.me/BotFather при создании бота
-- YANDEX_TRANSLATE_TOKEN – получаете в https://console.cloud.yandex.ru – читайте мануалы Яндекса, все по аналогии с сервисами Amazon.
+- YANDEX_TRANSLATE_TOKEN и YANDEX_TRANSLATE_FOLDER_ID – получаете в https://console.cloud.yandex.ru – читайте мануалы Яндекса, все по аналогии с сервисами Amazon.
 
 ### Принцип работы
 - Вся бизнес логика лежит в папке [app/Console/Commands](app/Console/Commands).
@@ -38,7 +38,7 @@ cp .env.example .env
 - [SendToTelegramCommand](app/Console/Commands/SendToTelegramCommand.php) занимается отправкой новых вариантов в телеграм
 
 После запуска миграций, у вас в БД будет таблица ```districts``` –
-это главная таблица для конфигурации, в ней я храню районы (или города), урлы для парсинга и ID канала в телеграмме, куда будут публиковаться объявления.
+это главная таблица для конфигурации, в ней я храню районы (или города), урлы для парсинга и ID канала в telegram, куда будут публиковаться объявления.
 
 Кстати, чтобы узнать ID канала в телеге проще всего переслать любое сообщение из канала боту – https://t.me/username_to_id_bot
 
