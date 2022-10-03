@@ -12,7 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class ParseMyHomeCommand extends Command
 {
     protected $signature = 'parse:myhome';
-    protected $description = 'Parser for myhome.ge';
+    protected $description = 'Парсер квартир с myhome.ge';
 
     public function handle()
     {

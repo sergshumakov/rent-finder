@@ -12,7 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class ParseSSCommand extends Command
 {
     protected $signature = 'parse:ss';
-    protected $description = 'Parser for ss.ge';
+    protected $description = 'Парсер квартир с ss.ge';
 
     public function handle()
     {

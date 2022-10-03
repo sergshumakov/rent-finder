@@ -13,12 +13,12 @@ use LanguageDetection\Language;
 class SendToTelegramCommand extends Command
 {
     protected $signature = 'send:telegram';
-    protected $description = 'Send new flats to telegram channel';
+    protected $description = 'Отправляет в телеграм каналы новые квартиры';
 
     /**
      * @throws Exception
      */
-    public function handle()
+    public function handle(): void
     {
         foreach (District::all() as $district) {
             $this->sendFlatFromDistrict($district);
@@ -28,7 +28,7 @@ class SendToTelegramCommand extends Command
     /**
      * @throws Exception
      */
-    private function sendFlatFromDistrict(District $district)
+    private function sendFlatFromDistrict(District $district): void
     {
         $flat = Flat::whereDistrictId($district->id)
             ->whereNull('published_at')
@@ -80,7 +80,7 @@ class SendToTelegramCommand extends Command
             $photos[0]['caption'] = $text;
 
             $result = Http::asJson()
-                ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMediaGroup', [
+                ->post('https://api.telegram.org/bot' . config('services.telegram.token') . '/sendMediaGroup', [
                     'chat_id' => $district->channel_id,
                     'media' => $photos,
                 ])
@@ -88,7 +88,7 @@ class SendToTelegramCommand extends Command
         } else {
             // text
             $result = Http::asJson()
-                ->post('https://api.telegram.org/bot5657009028:AAFsr2wbTnJ9V369DQdByUc8VcoIOAubWSg/sendMessage', [
+                ->post('https://api.telegram.org/bot' . config('services.telegram.token') . '/sendMessage', [
                     'chat_id' => $district->channel_id,
                     'text' => $text,
                     'parse_mode' => 'MarkdownV2'
@@ -130,7 +130,7 @@ class SendToTelegramCommand extends Command
 
         // translate
         $translate = Http::asJson()
-            ->withToken('AQVNxo6Z3rcWLYNxHYfm23wmcwqYpEPbOm-QIEzq', 'Api-Key')
+            ->withToken(config('services.yandexTranslate.token'), 'Api-Key')
             ->post('https://translate.api.cloud.yandex.net/translate/v2/translate', [
                 'targetLanguageCode' => 'ru',
                 'texts' => [$text],
@@ -145,7 +145,7 @@ class SendToTelegramCommand extends Command
         throw new Exception($translate['message']);
     }
 
-    private function escapeChars($text): string
+    private function escapeChars(string $text): string
     {
         $chars = [
             '_', '*', '[', ']', '(', ')', '~', '`',
