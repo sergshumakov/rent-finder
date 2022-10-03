@@ -134,7 +134,7 @@ class SendToTelegramCommand extends Command
             ->post('https://translate.api.cloud.yandex.net/translate/v2/translate', [
                 'targetLanguageCode' => 'ru',
                 'texts' => [$text],
-                'folderId' => 'b1gk5psvihgupg93uirb',
+                'folderId' => config('services.yandexTranslate.folderId'),
             ])
             ->json();
 

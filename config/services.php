@@ -37,6 +37,7 @@ return [
 
     'yandexTranslate' => [
         'token' => env('YANDEX_TRANSLATE_TOKEN'),
+        'folderId' => env('YANDEX_TRANSLATE_FOLDER_ID'),
     ],
 
 ];
