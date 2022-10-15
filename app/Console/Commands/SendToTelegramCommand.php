@@ -66,11 +66,10 @@ class SendToTelegramCommand extends Command
         $text .= 'Цена: ' . $this->escapeChars($flat->price) . "\n\n";
         $text .= "[Подробности и контакты]($flat->link)";
 
-        $rawPhotos = json_decode($flat->photos);
-        if(count($rawPhotos)) {
+        if($flat->photos) {
             // album with photos
             $photos = [];
-            foreach ($rawPhotos as $photo) {
+            foreach ($flat->photos as $photo) {
                 $photos[] = [
                     'type' => 'photo',
                     'media' => $photo,
