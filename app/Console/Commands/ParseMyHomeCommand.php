@@ -35,10 +35,6 @@ class ParseMyHomeCommand extends Command
                 $id = $item->attr('data-product-id');
                 if (!$id) return;
 
-                $existFlat = DB::table('flats')->where('uuid', 'mh-' . $id)
-                    ->exists();
-                if($existFlat) return;
-
                 $link = $item->filter('a.card-container')->attr('href');
 
                 $rawFlatPage = Http::retry(3, 1000)
@@ -85,6 +81,10 @@ class ParseMyHomeCommand extends Command
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
+
+                $existFlat = DB::table('flats')->where('uuid', 'mh-' . $id)
+                    ->exists();
+                if($existFlat) return;
 
                 DB::table('flats')->insert($data);
                 $this->info('Добавлена новая квартира: ' . $data['title']);
