@@ -29,7 +29,7 @@ class FindDuplicatesCommand extends Command
 
     public function handle()
     {
-        while($flat = Flat::whereNull('compared_at')->latest()->first()) {
+        while($flat = Flat::whereNull('compared_at')->latest()->lockForUpdate()->first()) {
             $this->info($flat->id);
             $isUnique = true;
 
