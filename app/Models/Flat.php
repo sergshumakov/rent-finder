@@ -10,6 +10,10 @@ class Flat extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'photos' => 'array',
+    ];
+
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class);
