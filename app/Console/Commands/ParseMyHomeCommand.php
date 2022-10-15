@@ -70,7 +70,7 @@ class ParseMyHomeCommand extends Command
                     'district_id' => $district->id,
                     'source' => 'myhome.ge',
                     'uuid' => 'mh-' . $id,
-                    'cad_number' => $cadNumber,
+                    'cad_number' => empty($cadNumber) ? null : $cadNumber,
                     'link' => $link,
                     'title' => $item->filter('h5.card-title')->text(),
                     'description' => $description->count() ? $description->text() : '',
