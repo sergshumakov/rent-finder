@@ -19,6 +19,7 @@ class Flat extends Model
     {
         static::created(function ($flat) {
             FindDuplicateJob::dispatch($flat);
+            \Log::debug('Created a new flat – ' . $flat->id);
         });
     }
 
