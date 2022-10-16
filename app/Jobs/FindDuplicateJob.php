@@ -35,7 +35,6 @@ class FindDuplicateJob implements ShouldQueue
 
     public function handle()
     {
-        Log::info($this->flat->id . ' – started');
         $isUnique = true;
 
         try {
@@ -47,9 +46,7 @@ class FindDuplicateJob implements ShouldQueue
                 }
                 Storage::put($flatPhoto, $photoBin->body());
 
-                $tStart = microtime(true);
                 $photoIsUnique = $this->isUniquePhoto($flatPhoto);
-                Log::info('Speed: ' . (microtime(true) - $tStart));
                 if (!$photoIsUnique) {
                     Storage::delete($flatPhoto);
                     $isUnique = false;
@@ -65,9 +62,6 @@ class FindDuplicateJob implements ShouldQueue
 
         if (!$isUnique) {
             $this->flat->duplicate_at = now();
-            Log::warning($this->flat->id . ' – find duplicate!');
-        } else {
-            Log::info($this->flat->id . ' – is unique!');
         }
 
         $this->flat->compared_at = now();
@@ -82,7 +76,6 @@ class FindDuplicateJob implements ShouldQueue
         $input = Storage::path($flatPhoto);
 
         $bankPhotos = Storage::files('photos');
-        Log::info('Count photos in bank: ' . count($bankPhotos));
 
         foreach ($bankPhotos as $photo) {
             if (!Storage::exists($photo)) {
