@@ -57,8 +57,8 @@ class FindDuplicateJob implements ShouldQueue
                     break;
                 }
             }
-        } catch (Exception) {
-            Log::error($this->flat->id . ' – photo is not found');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
             $this->flat->compared_at = now();
             $this->flat->save();
             return;
