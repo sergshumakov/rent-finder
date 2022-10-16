@@ -47,7 +47,7 @@ class ParseMyHomeJob implements ShouldQueue
 
                 ParseMyHomePageJob::dispatch(
                     district: $this->district,
-                    data: [
+                    item: [
                         'id' => $id,
                         'title' => $item->filter('h5.card-title')->text(),
                         'link' => $item->filter('a.card-container')->attr('href'),
