@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
@@ -35,6 +36,10 @@ class ParseMyHomeJob implements ShouldQueue
             ->each(closure: function (Crawler $item) {
                 $id = $item->attr('data-product-id');
                 if (!$id) return;
+
+                $existFlat = DB::table('flats')->where('uuid', 'mh-' . $id)
+                    ->exists();
+                if($existFlat) return;
 
                 $photos = [];
                 $photoContainer = $item->filter('img.swiper-lazy');
