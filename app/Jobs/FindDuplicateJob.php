@@ -43,7 +43,7 @@ class FindDuplicateJob implements ShouldQueue
                 $flatPhoto = 'photos/' . $this->flat->id . '_' . $key .'.jpg';
                 $photoBin = Http::get($photo);
                 if ($photoBin->status() == 404) {
-                    print_r($this->flat->photos);
+                    Log::debug(json_encode($this->flat->photos));
                     throw new Exception($photo . ' – photo not found', 404);
                 }
                 Storage::put($flatPhoto, $photoBin->body());
