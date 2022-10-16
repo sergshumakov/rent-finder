@@ -90,6 +90,9 @@ class FindDuplicateJob implements ShouldQueue
         );
 
         foreach ($items as $item) {
+            if (!Storage::exists($item)) {
+                continue;
+            }
             $duplicates = $this->comparer->findDuplicates([$input, $item], 0.04);
             if (count($duplicates)) {
                 // проверяем не дублируются ли фото внутри одного объявления
