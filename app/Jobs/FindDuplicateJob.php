@@ -41,7 +41,6 @@ class FindDuplicateJob implements ShouldQueue
         try {
             foreach($this->flat->photos as $key => $photo) {
                 $flatPhoto = 'photos/' . $this->flat->id . '_' . $key .'.jpg';
-                Log::info($photo);
                 $photoBin = Http::get($photo);
                 if ($photoBin->status() == 404) {
                     throw new Exception($photo . ' – photo not found', 404);
@@ -58,7 +57,7 @@ class FindDuplicateJob implements ShouldQueue
                 }
             }
         } catch (Exception $e) {
-            throw $e;
+            Log::error($e->getMessage());
             $this->flat->compared_at = now();
             $this->flat->save();
             return;
@@ -99,9 +98,7 @@ class FindDuplicateJob implements ShouldQueue
                 $leftId = (int) Str::remove($remove, $left);
                 $rightId = (int) Str::remove($remove, $right);
                 if ($leftId === $rightId) {
-                    // удаляем лишнюю фотографию
-                    Storage::delete($flatPhoto);
-                    break;
+                    continue;
                 } else {
                     // найден дубликат с другим объявлением
                     return false;
