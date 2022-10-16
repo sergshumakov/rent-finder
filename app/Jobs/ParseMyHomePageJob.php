@@ -57,7 +57,7 @@ class ParseMyHomePageJob implements ShouldQueue
             'address' => $this->item['address'],
             'flat_area' => $this->item['flatArea'],
             'flat_floor' => $this->item['flatFloor'],
-            'photos' => json_encode($this->item['photos']),
+            'photos' => $this->item['photos'],
             'lat' => $map->count() ? $map->attr('data-lat') : null,
             'lng' => $map->count() ? $map->attr('data-lng') : null,
             'time' => $this->item['time'],

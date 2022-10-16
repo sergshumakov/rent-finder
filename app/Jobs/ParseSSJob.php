@@ -59,7 +59,7 @@ class ParseSSJob implements ShouldQueue
                 'flat_area' => $item->filter('.latest_flat_km')->text(),
                 'flat_type' => $item->filter('.latest_flat_type')->count() ? $item->filter('.latest_flat_type')->text() : null,
                 'flat_floor' => $item->filter('.latest_stair_count')->text(),
-                'photos' => json_encode($photos),
+                'photos' => $photos,
                 'time' => $item->filter('.add_time')->text(),
                 'created_at' => now(),
                 'updated_at' => now(),
