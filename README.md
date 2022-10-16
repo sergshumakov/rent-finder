@@ -50,6 +50,11 @@ cp .env.example .env
 ./vendor/bin/sail parse:myhome
 ```
 
+Для отправки в телеграм запускайте команду:
+```bash
+./vendor/bin/sail send:telegram
+```
+
 Для production у меня сделан запуск по расписанию, смотри: [app/console/Kernel.php](app/Console/Kernel.php)
 
 Просто добавь на сервере в Cron задачу:
@@ -58,6 +63,15 @@ cp .env.example .env
 ```
 
 Документация по планировщику тут: https://laravel.com/docs/9.x/scheduling#introduction
+
+### Для ускорения работы
+Чтобы кэш от сравнения изображений работал быстро, лучше вынести его в оперативную память:
+```bash
+sudo mount -t tmpfs -o size=1G tmpfs /path-to-your-project/storage/app/temp
+
+# Добавить в /etc/fstabs:
+tmpfs /path-to-your-project/storage/app/temp tmpfs defaults,size=1G 0 0
+```
 
 ### Есть желание развивать проект?
 Буду рад вашим пулл-реквестам и баг-репортам и любому фидбэку по проекту.
