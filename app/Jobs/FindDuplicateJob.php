@@ -13,6 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FindDuplicateJob implements ShouldQueue
 {
@@ -46,7 +47,9 @@ class FindDuplicateJob implements ShouldQueue
                 }
                 Storage::put($flatPhoto, $photoBin->body());
 
+                $tStart = microtime(true);
                 $photoIsUnique = $this->isUniquePhoto($flatPhoto);
+                Log::info('Speed: ' . (microtime(true) - $tStart));
                 if (!$photoIsUnique) {
                     Storage::delete($flatPhoto);
                     $isUnique = false;
@@ -74,10 +77,9 @@ class FindDuplicateJob implements ShouldQueue
     /**
      * @throws Exception
      */
-    private function isUniquePhoto($input): bool
+    private function isUniquePhoto(string $flatPhoto): bool
     {
-        $tStart = microtime(true);
-        $input = Storage::path($input);
+        $input = Storage::path($flatPhoto);
 
         $bankPhotos = Storage::files('photos');
         Log::info('Count photos in bank: ' . count($bankPhotos));
@@ -90,12 +92,21 @@ class FindDuplicateJob implements ShouldQueue
         foreach ($items as $item) {
             $duplicates = $this->comparer->findDuplicates([$input, $item], 0.04);
             if (count($duplicates)) {
-                return false;
+                // проверяем не дублируются ли фото внутри одного объявления
+                [$left, $right] = $duplicates;
+                $remove = [Storage::path('photos') . '/', '_0.jpg', '_2.jpg', '_3.jpg', '_4.jpg'];
+                $leftId = (int) Str::remove($remove, $left);
+                $rightId = (int) Str::remove($remove, $right);
+                if ($leftId === $rightId) {
+                    // удаляем лишнюю фотографию
+                    Storage::delete($flatPhoto);
+                    break;
+                } else {
+                    // найден дубликат с другим объявлением
+                    return false;
+                }
             }
         }
-
-        $tEnd = microtime(true);
-        Log::info('Speed: ' . ($tEnd - $tStart));
 
         return true;
     }
