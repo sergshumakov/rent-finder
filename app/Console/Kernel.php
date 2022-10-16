@@ -15,9 +15,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('parse:ss')->everyFiveMinutes();
-        // $schedule->command('parse:myhome')->everyFiveMinutes();
-        // $schedule->command('send:telegram')->everyMinute();
+         $schedule->command('parse:ss')->everyFiveMinutes();
+         $schedule->command('parse:myhome')->everyFiveMinutes();
+         $schedule->command('send:telegram')->everyMinute();
+         $schedule->command('drop:old-flats')->daily();
     }
 
     /**
