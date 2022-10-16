@@ -58,7 +58,7 @@ class FindDuplicateJob implements ShouldQueue
                 }
             }
         } catch (Exception $e) {
-            Log::error($e->getMessage());
+            throw $e;
             $this->flat->compared_at = now();
             $this->flat->save();
             return;
