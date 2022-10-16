@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\District;
+use App\Models\Flat;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -68,6 +69,6 @@ class ParseMyHomePageJob implements ShouldQueue
             ->exists();
         if($existFlat) return;
 
-        DB::table('flats')->insert($data);
+        Flat::create($data);
     }
 }

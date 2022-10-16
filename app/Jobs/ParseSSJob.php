@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\District;
+use App\Models\Flat;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -64,7 +65,7 @@ class ParseSSJob implements ShouldQueue
                 'updated_at' => now(),
             ];
 
-            DB::table('flats')->insert($data);
+            Flat::create($data);
         });
     }
 }

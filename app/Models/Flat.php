@@ -15,6 +15,8 @@ class Flat extends Model
         'photos' => 'array',
     ];
 
+    protected $guarded = [];
+
     protected static function booted()
     {
         static::created(function ($flat) {
