@@ -33,6 +33,8 @@ class SendToTelegramCommand extends Command
         $flat = Flat::whereDistrictId($district->id)
             ->whereNull('published_at')
             ->whereNull('error_at')
+            ->whereNull('duplicate_at')
+            ->whereNotNull('compared_at')
             ->first();
 
         if(!$flat) {
