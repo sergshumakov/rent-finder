@@ -84,15 +84,11 @@ class FindDuplicateJob implements ShouldQueue
         $bankPhotos = Storage::files('photos');
         Log::info('Count photos in bank: ' . count($bankPhotos));
 
-        $items = array_map(
-            fn ($file) => Storage::path($file),
-            $bankPhotos
-        );
-
-        foreach ($items as $item) {
-            if (!Storage::exists($item)) {
+        foreach ($bankPhotos as $photo) {
+            if (!Storage::exists($photo)) {
                 continue;
             }
+            $item = Storage::path($photo);
             $duplicates = $this->comparer->findDuplicates([$input, $item], 0.04);
             if (count($duplicates)) {
                 // проверяем не дублируются ли фото внутри одного объявления
