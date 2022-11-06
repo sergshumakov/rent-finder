@@ -6,6 +6,7 @@ use App\Models\District;
 use App\Models\Flat;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use LanguageDetection\Language;
@@ -67,6 +68,11 @@ class SendToTelegramCommand extends Command
         $text .= 'Этаж: ' . $flat->flat_floor . "\n\n";
         $text .= 'Цена: ' . $this->escapeChars($flat->price) . "\n\n";
         $text .= "[Подробности и контакты]($flat->link)";
+
+        $tags = $this->getTags($flat);
+        if ($tags->count()) {
+            $text .= "\n\n" . $tags->join(' ');
+        }
 
         if($flat->photos) {
             // album with photos
@@ -160,5 +166,25 @@ class SendToTelegramCommand extends Command
         }
 
         return Str::replace($chars, $replace, $text);
+    }
+
+    private function getTags(Flat $flat): Collection
+    {
+        $tags = new Collection();
+
+        $numbersInPrice = preg_replace('/[^0-9]/', '', $flat->price);
+
+        if($numbersInPrice > 0) {
+            $from = floor($numbersInPrice / 500) * 500;
+            $to = $from + 500;
+
+            if ($from === 0) {
+                $tags->add('#до' . $to);
+            } else {
+                $tags->add('#от' . $from . 'до' . $to);
+            }
+        }
+
+        return $tags;
     }
 }
