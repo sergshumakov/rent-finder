@@ -175,7 +175,7 @@ class SendToTelegramCommand extends Command
         $numbersInPrice = preg_replace('/[^0-9]/', '', $flat->price);
 
         if($numbersInPrice > 0) {
-            $from = floor($numbersInPrice / 500) * 500;
+            $from = (int) floor($numbersInPrice / 500) * 500;
             $to = $from + 500;
 
             if ($from === 0) {
