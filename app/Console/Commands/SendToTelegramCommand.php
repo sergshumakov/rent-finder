@@ -71,7 +71,7 @@ class SendToTelegramCommand extends Command
 
         $tags = $this->getTags($flat);
         if ($tags->count()) {
-            $text .= "\n\n" . $tags->join(' ');
+            $text .= "\n\n" . $this->escapeChars($tags->join(' '));
         }
 
         if($flat->photos) {
