@@ -46,13 +46,13 @@ cp .env.example .env
 
 После этого запускайте команды парсеров:
 ```bash
-./vendor/bin/sail parse:ss
-./vendor/bin/sail parse:myhome
+./vendor/bin/sail artisan parse:ss
+./vendor/bin/sail artisan parse:myhome
 ```
 
 Для отправки в телеграм запускайте команду:
 ```bash
-./vendor/bin/sail send:telegram
+./vendor/bin/sail artisan send:telegram
 ```
 
 Для production у меня сделан запуск по расписанию, смотри: [app/console/Kernel.php](app/Console/Kernel.php)
