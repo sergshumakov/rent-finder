@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use LanguageDetection\Language;
 
@@ -115,6 +116,7 @@ class SendToTelegramCommand extends Command
                 $flat->error_at = now();
                 $flat->save();
             }
+            Log::error('For Text: ' . $text);
             throw new Exception($result['description']);
         }
     }
