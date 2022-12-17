@@ -66,7 +66,7 @@ class SendToTelegramCommand extends Command
             $text .= 'Дом: ' . $flat->flat_type . "\n";
         }
 
-        $text .= 'Этаж: ' . $flat->flat_floor . "\n\n";
+        $text .= 'Этаж: ' . $this->escapeChars($flat->flat_floor) . "\n\n";
         $text .= 'Цена: ' . $this->escapeChars($flat->price) . "\n\n";
         $text .= "[Подробности и контакты]($flat->link)";
 
