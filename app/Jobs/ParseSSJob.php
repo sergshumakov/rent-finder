@@ -51,7 +51,7 @@ class ParseSSJob implements ShouldQueue
                 'district_id' => $this->district->id,
                 'source' => 'ss.ge',
                 'uuid' => 'ss-' . $item->attr('data-id'),
-                'link' => 'https://ss.ge' . $item->filter('.latest_desc a')->attr('href'),
+                'link' => $item->filter('.latest_desc a')->attr('href'),
                 'title' => $item->filter('.TiTleSpanList')->text(),
                 'description' => $item->filter('.DescripTionListB')->text(),
                 'price' => $item->filter('.latest_price')->last()->text(),
